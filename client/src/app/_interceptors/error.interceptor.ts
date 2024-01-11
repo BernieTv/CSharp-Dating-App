@@ -36,7 +36,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                   }
                 }
 
-                throw modalStateError;
+                throw modalStateError.flat();
               } else {
                 this.toastr.error(error.error, errorStatus);
               }
