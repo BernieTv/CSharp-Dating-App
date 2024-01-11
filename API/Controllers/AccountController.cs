@@ -50,7 +50,7 @@ public class AccountController : BaseApiController
 
         if (user == null)
         {
-            return Unauthorized("Invalid username or password1");
+            return Unauthorized("Invalid username or password");
         }
 
         using var hmac = new HMACSHA512(user.PasswordSalt);
