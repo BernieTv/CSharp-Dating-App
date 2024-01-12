@@ -45,6 +45,6 @@ public class UsersController : BaseApiController
 
         if (await _userRepository.SaveAllAsync()) return NoContent();
 
-        return BadRequest("Failed to update user1");
+        return BadRequest("Failed to update user");
     }
 }
