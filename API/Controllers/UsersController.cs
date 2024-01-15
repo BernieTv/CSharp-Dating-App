@@ -51,6 +51,7 @@ public class UsersController : BaseApiController
         return BadRequest("Failed to update user");
     }
 
+    [HttpPost("add-photo")]
     public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
     {
         var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
