@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-
 import { AccountService } from './_services/account.service';
-import { IUser } from './_models/user';
+import { User } from './_models/user';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
   title = 'Dating app';
+  users: any;
 
   constructor(private accountService: AccountService) {}
 
@@ -19,11 +19,10 @@ export class AppComponent implements OnInit {
 
   setCurrentUser() {
     const userString = localStorage.getItem('user');
-
     if (!userString) return;
-
-    const user: IUser = JSON.parse(userString);
-
+    const user: User = JSON.parse(userString);
     this.accountService.setCurrentUser(user);
   }
+
+
 }

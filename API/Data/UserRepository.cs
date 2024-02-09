@@ -1,5 +1,4 @@
-using API.DTOs;
-using API.Entities;
+﻿using API.Entities;
 using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
@@ -19,34 +18,12 @@ public class UserRepository : IUserRepository
         _mapper = mapper;
     }
 
-    public async Task<AppUser> GetUserByIdAsync(int id)
-    {
-        return await _context.Users.FindAsync(id);
-    }
-
-    public async Task<AppUser> GetUserByUsernameAsync(string username)
-    {
-        return await _context.Users.Include(p => p.Photos).SingleOrDefaultAsync(x => x.UserName == username);
-    }
-
-    public async Task<IEnumerable<AppUser>> GetUsersAsync()
-    {
-        return await _context.Users.Include(p => p.Photos).ToListAsync();
-    }
-
-    public async Task<bool> SaveAllAsync()
-    {
-        return await _context.SaveChangesAsync() > 0;
-    }
-
-    public void Update(AppUser user)
-    {
-        _context.Entry(user).State = EntityState.Modified;
-    }
-
     public async Task<MemberDto> GetMemberAsync(string username)
     {
-        return await _context.Users.Where(x => x.UserName == username).ProjectTo<MemberDto>(_mapper.ConfigurationProvider).SingleOrDefaultAsync();
+        return await _context.Users
+            .Where(x => x.UserName == username)
+            .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
+            .SingleOrDefaultAsync();
     }
 
     public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
@@ -61,10 +38,36 @@ public class UserRepository : IUserRepository
 
         query = query.Where(u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
 
-        return await PagedList<MemberDto>.CreateAsync(
-            query.AsNoTracking().ProjectTo<MemberDto>(_mapper.ConfigurationProvider),
-            userParams.PageNumber,
-            userParams.PageSize
-        );
+        query = userParams.OrderBy switch
+        {
+            "created" => query.OrderByDescending(u => u.Created),
+            _ => query.OrderByDescending(u => u.LastActive)
+        };
+
+        return await PagedList<MemberDto>.CreateAsync(query.AsNoTracking()
+            .ProjectTo<MemberDto>(_mapper.ConfigurationProvider),
+                userParams.PageNumber, userParams.PageSize);
+    }
+
+    public async Task<AppUser> GetUserByIdAsync(int id)
+    {
+        return await _context.Users.FindAsync(id);
+    }
+
+    public async Task<AppUser> GetUserByUsernameAsync(string username)
+    {
+        return await _context.Users
+            .Include(p => p.Photos)
+            .SingleOrDefaultAsync(x => x.UserName == username);
+    }
+
+    public async Task<IEnumerable<AppUser>> GetUsersAsync()
+    {
+        return await _context.Users.ToListAsync();
+    }
+
+    public void Update(AppUser user)
+    {
+        _context.Entry(user).State = EntityState.Modified;
     }
 }

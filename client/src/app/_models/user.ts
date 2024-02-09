@@ -1,5 +1,8 @@
-export interface IUser {
-  username: string;
-  token: string;
-  photoUrl: string;
+export interface User {
+    username: string;
+    token: string;
+    photoUrl: string;
+    knownAs: string;
+    gender: string;
+    roles: string[];
 }

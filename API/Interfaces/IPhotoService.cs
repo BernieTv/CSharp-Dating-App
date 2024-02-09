@@ -1,4 +1,4 @@
-using CloudinaryDotNet.Actions;
+﻿using CloudinaryDotNet.Actions;
 
 namespace API.Interfaces;
 
